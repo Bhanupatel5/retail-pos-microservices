@@ -39,7 +39,7 @@ public class User {
     private Role role;
 
     @Column(nullable = false)
-    private Boolean active = true;
+    private boolean active = true;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
@@ -98,11 +98,11 @@ public class User {
         this.role = role;
     }
 
-    public Boolean getActive() {
+    public boolean getActive() {
         return active;
     }
 
-    public void setActive(Boolean active) {
+    public void setActive(boolean active) {
         this.active = active;
     }
 
