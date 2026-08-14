@@ -61,6 +61,22 @@ public class GlobalExceptionHandler {
                 response,
                 HttpStatus.CONFLICT);
     }
+    
+    @ExceptionHandler(InsufficientStockException.class)
+    public ResponseEntity<ErrorResponse> handleInsufficientStock(
+            InsufficientStockException ex,
+            HttpServletRequest request) {
+
+        ErrorResponse response = new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.CONFLICT.value(),
+                ex.getMessage(),
+                request.getRequestURI());
+
+        return new ResponseEntity<>(
+                response,
+                HttpStatus.CONFLICT);
+    }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGeneralException(
@@ -77,4 +93,6 @@ public class GlobalExceptionHandler {
                 response,
                 HttpStatus.INTERNAL_SERVER_ERROR);
     }
+    
+   
 }

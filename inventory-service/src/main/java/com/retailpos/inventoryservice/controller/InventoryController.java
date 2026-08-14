@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.retailpos.inventoryservice.dto.InventoryRequest;
 import com.retailpos.inventoryservice.dto.InventoryResponse;
+import com.retailpos.inventoryservice.dto.StockRequest;
 import com.retailpos.inventoryservice.service.InventoryService;
 
 import jakarta.validation.Valid;
@@ -78,5 +79,27 @@ public class InventoryController {
         inventoryService.deleteInventory(productId);
 
         return ResponseEntity.noContent().build();
+    }
+    
+    @PostMapping("/{productId}/add")
+    public ResponseEntity<InventoryResponse> addStock(
+            @PathVariable Long productId,
+            @Valid @RequestBody StockRequest request) {
+
+        InventoryResponse response =
+                inventoryService.addStock(productId, request);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/{productId}/reduce")
+    public ResponseEntity<InventoryResponse> reduceStock(
+            @PathVariable Long productId,
+            @Valid @RequestBody StockRequest request) {
+
+        InventoryResponse response =
+                inventoryService.reduceStock(productId, request);
+
+        return ResponseEntity.ok(response);
     }
 }

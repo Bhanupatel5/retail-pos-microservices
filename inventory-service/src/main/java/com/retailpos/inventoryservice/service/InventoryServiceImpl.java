@@ -11,8 +11,10 @@ import com.retailpos.inventoryservice.client.ProductClient;
 import com.retailpos.inventoryservice.dto.InventoryRequest;
 import com.retailpos.inventoryservice.dto.InventoryResponse;
 import com.retailpos.inventoryservice.dto.ProductResponse;
+import com.retailpos.inventoryservice.dto.StockRequest;
 import com.retailpos.inventoryservice.entity.Inventory;
 import com.retailpos.inventoryservice.exception.DuplicateInventoryException;
+import com.retailpos.inventoryservice.exception.InsufficientStockException;
 import com.retailpos.inventoryservice.exception.InventoryNotFoundException;
 import com.retailpos.inventoryservice.exception.ProductNotFoundException;
 import com.retailpos.inventoryservice.repository.InventoryRepository;
@@ -154,5 +156,60 @@ public class InventoryServiceImpl implements InventoryService {
         response.setUpdatedAt(inventory.getUpdatedAt());
 
         return response;
+    }
+    
+    @Override
+    public InventoryResponse addStock(Long productId, StockRequest request) {
+
+        Inventory inventory =
+                inventoryRepository
+                        .findByProductIdAndActiveTrue(productId)
+                        .orElseThrow(() ->
+                                new InventoryNotFoundException(
+                                        "Inventory not found for Product Id : "
+                                                + productId));
+
+        inventory.setQuantity(
+                inventory.getQuantity() + request.getQuantity());
+
+        inventory.setUpdatedAt(LocalDateTime.now());
+
+        Inventory updatedInventory =
+                inventoryRepository.save(inventory);
+
+        return mapToResponse(updatedInventory);
+    }
+
+    @Override
+    public InventoryResponse reduceStock(
+            Long productId,
+            StockRequest request) {
+
+        Inventory inventory =
+                inventoryRepository
+                        .findByProductIdAndActiveTrue(productId)
+                        .orElseThrow(() ->
+                                new InventoryNotFoundException(
+                                        "Inventory not found for Product Id : "
+                                                + productId));
+
+        int currentQuantity = inventory.getQuantity();
+        int reduceQuantity = request.getQuantity();
+
+        if (reduceQuantity > currentQuantity) {
+            throw new InsufficientStockException(
+                    "Insufficient stock for Product Id : "
+                            + productId);
+        }
+
+        inventory.setQuantity(
+                currentQuantity - reduceQuantity);
+
+        inventory.setUpdatedAt(LocalDateTime.now());
+
+        Inventory updatedInventory =
+                inventoryRepository.save(inventory);
+
+        return mapToResponse(updatedInventory);
     }
 }

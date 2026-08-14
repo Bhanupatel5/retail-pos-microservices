@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.retailpos.inventoryservice.dto.InventoryRequest;
 import com.retailpos.inventoryservice.dto.InventoryResponse;
+import com.retailpos.inventoryservice.dto.StockRequest;
 
 public interface InventoryService {
 
@@ -16,4 +17,8 @@ public interface InventoryService {
     InventoryResponse updateInventory(Long productId, InventoryRequest request);
 
     void deleteInventory(Long productId);
+    
+    InventoryResponse addStock(Long productId, StockRequest request);
+
+    InventoryResponse reduceStock(Long productId, StockRequest request);
 }
