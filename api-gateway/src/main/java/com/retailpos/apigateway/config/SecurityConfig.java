@@ -35,20 +35,17 @@ public class SecurityConfig {
                 .requestMatchers("/auth/register")
                 .hasRole("ADMIN")
 
-                .requestMatchers(HttpMethod.GET, "/products/**")
+                .requestMatchers(HttpMethod.GET, "/products/**", "/inventory/**")
                 .hasAnyRole("ADMIN", "MANAGER", "CASHIER")
 
-                .requestMatchers(HttpMethod.POST, "/products/**")
+                .requestMatchers(HttpMethod.POST, "/products/**", "/inventory/**")
                 .hasAnyRole("ADMIN", "MANAGER")
 
-                .requestMatchers(HttpMethod.PUT, "/products/**")
+                .requestMatchers(HttpMethod.PUT, "/products/**", "/inventory/**")
                 .hasAnyRole("ADMIN", "MANAGER")
 
-                .requestMatchers(HttpMethod.DELETE, "/products/**")
+                .requestMatchers(HttpMethod.DELETE, "/products/**", "/inventory/**")
                 .hasRole("ADMIN")
-
-                .anyRequest()
-                .authenticated()
             )
 
             .addFilterBefore(
