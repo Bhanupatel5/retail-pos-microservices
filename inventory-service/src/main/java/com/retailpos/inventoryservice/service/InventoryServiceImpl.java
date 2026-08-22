@@ -159,6 +159,20 @@ public class InventoryServiceImpl implements InventoryService {
     }
     
     @Override
+    public Integer getAvailableQuantity(Long productId) {
+
+        Inventory inventory =
+                inventoryRepository
+                        .findByProductIdAndActiveTrue(productId)
+                        .orElseThrow(() ->
+                                new InventoryNotFoundException(
+                                        "Inventory not found for Product Id : "
+                                                + productId));
+
+        return inventory.getQuantity();
+    }
+    
+    @Override
     public InventoryResponse addStock(Long productId, StockRequest request) {
 
         Inventory inventory =

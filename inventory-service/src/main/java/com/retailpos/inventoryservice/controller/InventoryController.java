@@ -81,6 +81,13 @@ public class InventoryController {
         return ResponseEntity.noContent().build();
     }
     
+    @GetMapping("/{productId}/availability")
+    public ResponseEntity<Integer> getAvailableQuantity(
+            @PathVariable Long productId) {
+
+        return ResponseEntity.ok(
+                inventoryService.getAvailableQuantity(productId));
+    }
     @PostMapping("/{productId}/add")
     public ResponseEntity<InventoryResponse> addStock(
             @PathVariable Long productId,

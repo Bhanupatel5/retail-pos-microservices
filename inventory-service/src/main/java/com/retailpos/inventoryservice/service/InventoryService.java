@@ -18,6 +18,8 @@ public interface InventoryService {
 
     void deleteInventory(Long productId);
     
+    Integer getAvailableQuantity(Long productId);
+    
     InventoryResponse addStock(Long productId, StockRequest request);
 
     InventoryResponse reduceStock(Long productId, StockRequest request);

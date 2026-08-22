@@ -1,4 +1,4 @@
-package com.retailpos.inventoryservice.exception;
+package com.retailpos.orderservice.exception;
 
 import java.time.LocalDateTime;
 
@@ -6,18 +6,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import com.retailpos.inventoryservice.exception.InsufficientStockException;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.retailpos.inventoryservice.dto.ErrorResponse;
+import com.retailpos.orderservice.dto.ErrorResponse;
 
 import jakarta.servlet.http.HttpServletRequest;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(InventoryNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleInventoryNotFound(
-            InventoryNotFoundException ex,
+    @ExceptionHandler(OrderNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleOrderNotFound(
+            OrderNotFoundException ex,
             HttpServletRequest request) {
 
         ErrorResponse response = new ErrorResponse(
@@ -47,22 +47,6 @@ public class GlobalExceptionHandler {
                 HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(DuplicateInventoryException.class)
-    public ResponseEntity<ErrorResponse> handleDuplicateInventory(
-            DuplicateInventoryException ex,
-            HttpServletRequest request) {
-
-        ErrorResponse response = new ErrorResponse(
-                LocalDateTime.now(),
-                HttpStatus.CONFLICT.value(),
-                ex.getMessage(),
-                request.getRequestURI());
-
-        return new ResponseEntity<>(
-                response,
-                HttpStatus.CONFLICT);
-    }
-    
     @ExceptionHandler(InsufficientStockException.class)
     public ResponseEntity<ErrorResponse> handleInsufficientStock(
             InsufficientStockException ex,
@@ -79,21 +63,19 @@ public class GlobalExceptionHandler {
                 HttpStatus.CONFLICT);
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleGeneralException(
-            Exception ex,
+    @ExceptionHandler(InvalidOrderStatusException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidOrderStatus(
+            InvalidOrderStatusException ex,
             HttpServletRequest request) {
 
         ErrorResponse response = new ErrorResponse(
                 LocalDateTime.now(),
-                HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                "An unexpected error occurred",
+                HttpStatus.CONFLICT.value(),
+                ex.getMessage(),
                 request.getRequestURI());
 
         return new ResponseEntity<>(
                 response,
-                HttpStatus.INTERNAL_SERVER_ERROR);
+                HttpStatus.CONFLICT);
     }
-    
-   
 }
