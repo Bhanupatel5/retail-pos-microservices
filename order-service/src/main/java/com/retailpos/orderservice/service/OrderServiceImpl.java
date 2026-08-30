@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.retailpos.orderservice.client.InventoryClient;
-import com.retailpos.orderservice.client.ProductClient;
+
 import com.retailpos.orderservice.dto.OrderItemRequest;
 import com.retailpos.orderservice.dto.ProductResponse;
 import com.retailpos.orderservice.entity.Order;
@@ -17,10 +17,11 @@ import com.retailpos.orderservice.entity.OrderStatus;
 import com.retailpos.orderservice.exception.InsufficientStockException;
 import com.retailpos.orderservice.exception.InvalidOrderStatusException;
 import com.retailpos.orderservice.exception.OrderNotFoundException;
-import com.retailpos.orderservice.exception.ProductNotFoundException;
+
 import com.retailpos.orderservice.repository.OrderItemRepository;
 import com.retailpos.orderservice.repository.OrderRepository;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -28,9 +29,13 @@ import lombok.RequiredArgsConstructor;
 public class OrderServiceImpl implements OrderService {
 
     private final OrderItemRepository orderItemRepository;
-    private final ProductClient productClient;
+   
     private final InventoryClient inventoryClient;
     private final OrderRepository orderRepository;
+    private final ProductServiceClient productServiceClient;
+    
+    
+  
 
     @Override
     @Transactional
@@ -82,24 +87,9 @@ public class OrderServiceImpl implements OrderService {
         	        "Items can only be added to a draft order");
         }
 
-        ProductResponse product;
-
-        try {
-            product = productClient.getProductById(
-                    request.getProductId());
-
-        } catch (Exception ex) {
-
-        	throw new ProductNotFoundException(
-        	        "Product not found with Id : "
-        	                + request.getProductId());
-        }
-
-        if (product == null) {
-        	throw new ProductNotFoundException(
-        	        "Product not found with Id : "
-        	                + request.getProductId());
-        }
+        ProductResponse product =
+                productServiceClient.getProduct(
+                        request.getProductId());
 
         Optional<OrderItem> existingItem =
                 orderItemRepository.findByOrderIdAndProductId(

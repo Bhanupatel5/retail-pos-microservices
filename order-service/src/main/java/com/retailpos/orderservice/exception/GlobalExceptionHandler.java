@@ -46,6 +46,21 @@ public class GlobalExceptionHandler {
                 response,
                 HttpStatus.NOT_FOUND);
     }
+    @ExceptionHandler(ProductServiceUnavailableException.class)
+    public ResponseEntity<ErrorResponse> handleProductServiceUnavailable(
+            ProductServiceUnavailableException ex,
+            HttpServletRequest request) {
+
+        ErrorResponse response = new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.SERVICE_UNAVAILABLE.value(),
+                ex.getMessage(),
+                request.getRequestURI());
+
+        return new ResponseEntity<>(
+                response,
+                HttpStatus.SERVICE_UNAVAILABLE);
+    }
 
     @ExceptionHandler(InsufficientStockException.class)
     public ResponseEntity<ErrorResponse> handleInsufficientStock(
