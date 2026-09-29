@@ -20,6 +20,8 @@ import jakarta.transaction.Transactional;
 
 @Service
 public class ProductServiceImpl implements ProductService {
+	
+
 
     @Autowired
     private ProductRepository productRepository;
@@ -89,6 +91,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductResponse getProductById(Long id) {
 
+    	
         Product product = productRepository.findByIdAndActiveTrue(id)
                 .orElseThrow(() ->
                         new ProductNotFoundException(
